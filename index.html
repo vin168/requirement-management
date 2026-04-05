@@ -433,6 +433,10 @@
             background-color: #95a5a6;
         }
 
+        .badge-default {
+            background-color: #34495e;
+        }
+
         .badge-status {
             color: white;
         }
@@ -1831,16 +1835,16 @@
                 this.elements.submitBtn.textContent = '更新需求';
                 this.elements.cancelEditBtn.style.display = 'inline-block';
 
-                // 填充表单
+                // 先打开模态框，渲染表单选项
+                this.openRequirementModal();
+
+                // 填充表单（在renderFormOptions之后）
                 this.elements.titleInput.value = requirement.title;
                 this.elements.descriptionInput.value = requirement.description;
                 this.elements.moduleSelect.value = requirement.module;
                 this.elements.consultantInput.value = requirement.consultant;
                 this.elements.statusSelect.value = requirement.status;
                 this.elements.notesInput.value = requirement.notes || '';
-
-                // 打开模态框
-                this.openRequirementModal();
             }
 
             // 取消编辑
@@ -2141,6 +2145,7 @@
                         this.renderFilterOptions();
                         this.renderFormOptions();
                         this.renderStatistics();
+                        this.renderRequirementsList(); // 重新渲染需求列表以确保样式正确
                         Utils.showMessage(`模块"${moduleName}"添加成功`, 'success');
                     } else {
                         Utils.showMessage(`模块"${moduleName}"已存在`, 'warning');
@@ -2168,6 +2173,7 @@
                         this.renderFilterOptions();
                         this.renderFormOptions();
                         this.renderStatistics();
+                        this.renderRequirementsList(); // 重新渲染需求列表以确保样式正确
                         Utils.showMessage(`状态"${statusName}"添加成功`, 'success');
                     } else {
                         Utils.showMessage(`状态"${statusName}"已存在`, 'warning');
@@ -2191,6 +2197,7 @@
                     this.renderFilterOptions();
                     this.renderFormOptions();
                     this.renderStatistics();
+                    this.renderRequirementsList(); // 重新渲染需求列表
                     Utils.showMessage(`模块"${moduleName}"删除成功`, 'success');
                 } catch (error) {
                     console.error('删除模块失败:', error);
@@ -2211,6 +2218,7 @@
                     this.renderFilterOptions();
                     this.renderFormOptions();
                     this.renderStatistics();
+                    this.renderRequirementsList(); // 重新渲染需求列表
                     Utils.showMessage(`状态"${statusName}"删除成功`, 'success');
                 } catch (error) {
                     console.error('删除状态失败:', error);
@@ -2231,6 +2239,7 @@
                     this.renderFilterOptions();
                     this.renderFormOptions();
                     this.renderStatistics();
+                    this.renderRequirementsList(); // 重新渲染需求列表
                     Utils.showMessage('配置已重置为默认值', 'success');
                 } catch (error) {
                     console.error('重置配置失败:', error);
@@ -2374,7 +2383,8 @@
                     '运维': 'operations',
                     '其他': 'other'
                 };
-                return classMap[module] || 'default';
+                // 如果模块在映射表中，返回对应类名；否则使用'other'类
+                return classMap[module] || 'other';
             }
 
             // 获取状态对应的CSS类名
